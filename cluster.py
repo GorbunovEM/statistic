@@ -6,12 +6,26 @@ import patsy
 import numpy as np
 from sklearn.cluster import KMeans
 from scipy.cluster.hierarchy import dendrogram, linkage, fcluster
-
+from sklearn.manifold import TSNE
 
 iris = sm.datasets.get_rdataset('iris')
 iris_data = pd.DataFrame(iris.data)
 iris_data.rename(columns={'Sepal.Length': 'SL', 'Sepal.Width':'SW', 'Petal.Length':'PL', 'Petal.Width':'PW'}, \
                     inplace=True)
+
+iris_data['Species'] = pd.Categorical(iris_data.Species)
+iris_data['code'] = iris_data.Species.cat.codes
+tsne = TSNE()
+transformed = tsne.fit_transform(iris_data[['SL', 'SW', 'PL', 'PW', 'code']])
+plt.figure(figsize=(16,10))
+sns.scatterplot(
+    x=transformed[:,0],y=transformed[:,1],
+    palette=sns.color_palette("hls", 10),
+    legend="full",
+    alpha=0.3
+);
+plt.show()
+
 #SKlearn
 lst = []
 for k in range(1,8):
