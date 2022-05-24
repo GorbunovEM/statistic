@@ -7,12 +7,19 @@ import numpy as np
 from sklearn.cluster import KMeans
 from scipy.cluster.hierarchy import dendrogram, linkage, fcluster
 from sklearn.manifold import TSNE
+from sklearn import preprocessing
+from scipy.spatial.distance import pdist
 
 iris = sm.datasets.get_rdataset('iris')
 iris_data = pd.DataFrame(iris.data)
 iris_data.rename(columns={'Sepal.Length': 'SL', 'Sepal.Width':'SW', 'Petal.Length':'PL', 'Petal.Width':'PW'}, \
                     inplace=True)
 
+#normalize data
+dataNorm = preprocessing.MinMaxScaler().fit_transform(iris_data[['SL', 'SW', 'PL', 'PW']])
+#data_dist = pdist(dataNorm, 'euclidean') #to scipy linkage
+
+#use TSNE to reduce dimension
 iris_data['Species'] = pd.Categorical(iris_data.Species)
 iris_data['code'] = iris_data.Species.cat.codes
 tsne = TSNE()
