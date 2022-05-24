@@ -15,9 +15,22 @@ iris_data = pd.DataFrame(iris.data)
 iris_data.rename(columns={'Sepal.Length': 'SL', 'Sepal.Width':'SW', 'Petal.Length':'PL', 'Petal.Width':'PW'}, \
                     inplace=True)
 
-#normalize data
+#normalize data, get optimal number of cluster
 dataNorm = preprocessing.MinMaxScaler().fit_transform(iris_data[['SL', 'SW', 'PL', 'PW']])
-#data_dist = pdist(dataNorm, 'euclidean') #to scipy linkage
+data_dist = pdist(dataNorm, 'euclidean')
+model_scipy = linkage(iris_data[['SL', 'PL']], 'ward')
+last = data_linkage[-10:,2]
+last_rev = last[::-1]
+idxs = np.arange(1, len(last) + 1)
+plt.plot(idxs, last_rev)
+
+acceleration = np.diff(last, 2)  
+acceleration_rev = acceleration[::-1]
+plt.plot(idxs[:-2] + 1, acceleration_rev)
+plt.show()
+k = acceleration_rev[1:].argmax() + 2 
+print("Рекомендованное количество кластеров:", k)
+
 
 #use TSNE to reduce dimension
 iris_data['Species'] = pd.Categorical(iris_data.Species)
